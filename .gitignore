@@ -51,9 +51,5 @@ Temporary Items
 .tmp
 .crf
 .d
-/obj/*
-/obj
-/Inc/Backup/*
-/Inc/Backup
-/Src/Backup/*
-/Src/Backup
+MDK-ARM/STM32F429_439xx/*
+MDK-ARM/STM32F429_439xx/
