@@ -78,12 +78,13 @@ int main(void)
 	OV2640_ImageResolution_TypeDef cur_img_res;
 	OV2640_IDTypeDef OV2640ID;
 	RCC_ClocksTypeDef SYS_Clocks;
-	uint32_t i=0;
-		if (SysTick_Config(SystemCoreClock / 1000))
-  	{ 
-	    /* Capture error */ 
-	    while (1);
-  	}
+	//uint32_t i=0;
+	
+	if (SysTick_Config(SystemCoreClock / 1000))
+	{ 
+		/* Capture error */ 
+		while (1);
+	}
   /* USART configuration */
   USART_Config();
        
@@ -257,14 +258,60 @@ void LCD_DisplayRawLine(uint16_t lnnum, uint8_t *buf)
 void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
 {
 	uint16_t i,j;	
-	__IO uint32_t tmp;
-	//__IO uint16_t tmp;
-	//uint8_t tmp;
+	__IO uint16_t tmp;
 	uint32_t offs, joffs;
 	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
-	uint32_t CFBuf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
-	//uint32_t CFBuf = LCD_FRAME_BUFFER;
+	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
+	//uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER;
 
+	for(j=0; j<ylen; j++){
+		joffs = 2 * j * xlen;
+		offs = LCD_ofset_buf + j * LCD_PIXEL_WIDTH * 2;
+//		offs = LCD_ofset_buf + j * 408 * 2;
+		for(i=0; i<xlen; i++){
+			tmp = *(__IO uint16_t *) (buf + 2*i + joffs);
+			*(__IO uint16_t *) (2*i + offs) = tmp;
+		}
+	}
+}
+
+void LCD_DisplayBufOld(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
+{
+	uint16_t i,j;	
+	uint16_t tmp;
+	uint32_t offs, joffs;
+	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
+	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
+	//uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER;
+
+	for(j=0; j<ylen; j++){
+		joffs = 2 * j * xlen;
+		offs = LCD_ofset_buf + j * LCD_PIXEL_WIDTH * 2;
+//		offs = CFBuf + j * 408 * 2;
+		for(i=0;i<xlen;i++){
+			//*(__IO uint16_t *) (offs + i * 2) = LCD_COLOR_RED;
+			tmp = (*(buf + 2 * i + joffs) << 8) | *(buf + 2 * i + joffs + 1) ;
+			//tmp = (*(buf + 2 * i + joffs + 1) << 8) | *(buf + 2 * i + joffs) ;
+			*(__IO uint16_t *) (offs + i * 2) = tmp;
+		}
+	}
+}
+
+void LCD_CopyBufToMem(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
+{
+	uint16_t i;	
+	__IO uint32_t tmp;
+	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
+	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
+
+	for(i=0; i<xlen*ylen/2; i++){
+		tmp = *(__IO uint32_t *) (buf + 4*i);
+		*(__IO uint32_t *) (LCD_ofset_buf + 4*i) = tmp;
+	}
+}
+
+void LCD_CopyBufToMemDMA(uint8_t *buf)
+{
 //	DMA_InitTypeDef  DMA_InitStructure;
 //	DMA_DeInit(DMA1_Channel1);
 //	DMA_InitStructure.DMA_M2M = DMA_M2M_Enable;
@@ -277,7 +324,7 @@ void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
 //	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 //	DMA_InitStructure.DMA_BufferSize = OV2640_GetWidth(ImageRes)/2;
 //	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)buf;
-//	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)CFBuf;
+//	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)(LCD_FRAME_BUFFER + BUFFER_OFFSET);
 //	DMA_Init(DMA1_Channel1, &DMA_InitStructure);
 //	DMA_ITConfig(DMA1_Channel1, DMA_IT_TC, ENABLE);
 //	 
@@ -287,33 +334,6 @@ void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
 //	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 //	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 //	NVIC_Init(&NVIC_InitStructure);
-
-//	for(j=0;j<ylen;j++){
-//		joffs = 2 * j * xlen;
-//		offs = CFBuf + j * LCD_PIXEL_WIDTH * 2;
-		offs = CFBuf;
-//		offs = CFBuf + j * 408 * 2;
-////		for(i=0;i<xlen;i++){
-////			//*(__IO uint16_t *) (offs + i * 2) = LCD_COLOR_RED;
-////			tmp = (*(buf + 2 * i + joffs) << 8) | *(buf + 2 * i + joffs + 1) ;
-////			//tmp = (*(buf + 2 * i + joffs + 1) << 8) | *(buf + 2 * i + joffs) ;
-////			*(__IO uint16_t *) (offs + i * 2) = tmp;
-////		}
-////		for(i=0;i<xlen;i++){
-////			tmp = *(__IO uint16_t *) (buf + 2*i + joffs);
-////			*(__IO uint16_t *) (2*i + offs) = tmp;
-////		}
-//		for(i=0;i<xlen/2;i++){
-//			tmp = *(__IO uint32_t *) (buf + 4*i + joffs);
-//			*(__IO uint32_t *) (4*i + offs) = tmp;
-//		}
-//	}
-
-		for(i=0;i<xlen*ylen/2;i++){
-			tmp = *(__IO uint32_t *) (buf + 4*i);
-			*(__IO uint32_t *) (4*i + offs) = tmp;
-		}
-
 }
 
 #ifdef  USE_FULL_ASSERT
