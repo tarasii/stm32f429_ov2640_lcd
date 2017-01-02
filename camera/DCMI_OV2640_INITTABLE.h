@@ -15,25 +15,25 @@
 #define   CTRLI_V_DIV_SET(x)    ((x & 0x03) << 3)
 #define   CTRLI_H_DIV_SET(x)     (x & 0x03)
 #define HSIZE       0x51 /* H_SIZE[7:0] (real/4) */
-#define   HSIZE_SET(x)          ((x / 4) & 0xFF)
+#define   HSIZE_SET(x)          ((x >> 2) & 0xFF)
 #define VSIZE       0x52 /* V_SIZE[7:0] (real/4) */
-#define   VSIZE_SET(x)          ((x / 4) & 0xFF)
+#define   VSIZE_SET(x)          ((x >> 2) & 0xFF)
 #define XOFFL       0x53 /* OFFSET_X[7:0] */
 #define   XOFFL_SET(x)           (x & 0xFF)
 #define YOFFL       0x54 /* OFFSET_Y[7:0] */
 #define   YOFFL_SET(x)           (x & 0xFF)
 #define VHYX        0x55 /* Offset and size completion */
-#define   VHYX_VSIZE_SET(x)      ((x & 0x01) << 7)
-#define   VHYX_HSIZE_SET(x)      ((x & 0x01) << 3)
+#define   VHYX_VSIZE_SET(x)     (((x >> 2) & 0x100) >> 1)
+#define   VHYX_HSIZE_SET(x)     (((x >> 2) & 0x100) >> 5)
 #define   VHYX_YOFF_SET(x)       ((x & 0x07) << 4)
 #define   VHYX_XOFF_SET(x)        (x & 0x07)
 #define DPRP        0x56
 #define TEST        0x57 /* Horizontal size completion */
-//#define   TEST_HSIZE_SET(x)     VAL_SET(x, 0x1, (9+2), 7)
+#define   TEST_HSIZE_SET(x)     (((x >> 2) & 0x200) >> 2)
 #define ZMOW        0x5A /* Zoom: Out Width  OUTW[7:0] (real/4) */
-#define   ZMOW_OUTW_SET(x)       (x / 4) & 0xFF
+#define   ZMOW_OUTW_SET(x)       (x >> 2) & 0xFF
 #define ZMOH        0x5B /* Zoom: Out Height OUTH[7:0] (real/4) */
-#define   ZMOH_OUTH_SET(x)       (x / 4) & 0xFF
+#define   ZMOH_OUTH_SET(x)       (x >> 2) & 0xFF
 #define ZMHH        0x5C /* Zoom: Speed and H&W completion */
 #define   ZMHH_ZSPEED_SET(x)    ((x & 0x0F) << 4)
 #define   ZMHH_OUTH_SET(x)      ((x & 0x01) << 2)
@@ -54,9 +54,9 @@
 #define   SIZEL_HSIZE8_SET(x)     ((x & 0x07) << 3)
 #define   SIZEL_VSIZE8_SET(x)      (x & 0x07)
 #define HSIZE8      0xC0 /* Image Horizontal Size HSIZE[10:3] */
-#define   HSIZE8_SET(x)         ((x / 8) & 0xFF)
+#define   HSIZE8_SET(x)         ((x >> 3) & 0xFF)
 #define VSIZE8      0xC1 /* Image Vertical Size VSIZE[10:3] */
-#define   VSIZE8_SET(x)         ((x / 8) & 0xFF)
+#define   VSIZE8_SET(x)         ((x >> 3) & 0xFF)
 #define CTRL0       0xC2 /* DSP Module enable 0 */
 #define   CTRL0_AEC_EN       0x80
 #define   CTRL0_AEC_SEL      0x40
@@ -517,11 +517,11 @@ const unsigned char OV2640_DSP_480x320[][2]=
 	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(1) | CTRLI_H_DIV_SET(1), //0x89,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(480),
 	ZMOH,     ZMOH_OUTH_SET(320), 
@@ -539,14 +539,14 @@ const unsigned char OV2640_DSP_408x304[][2]=
 	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(1) | CTRLI_H_DIV_SET(1), //0x89,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
-	TEST,     0x00,
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	TEST,     TEST_HSIZE_SET(1600),
 	ZMOW,     ZMOW_OUTW_SET(408),
-	ZMOH,     ZMOH_OUTH_SET(304), 
+	ZMOH,     ZMOH_OUTH_SET(304),  	
 	ZMHH,     0x00,
 	RESET,    0x00
 	
@@ -560,11 +560,11 @@ const unsigned char OV2640_DSP_352x288[][2]=
 	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(352), //0x58,
 	ZMOH,     ZMOH_OUTH_SET(288), //0x48,
@@ -580,11 +580,11 @@ const unsigned char OV2640_DSP_320x200[][2]=
 	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(320), 
 	ZMOH,     ZMOH_OUTH_SET(200), 
@@ -600,11 +600,11 @@ const unsigned char OV2640_DSP_176x144[][2]=
 	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(176), 
 	ZMOH,     ZMOH_OUTH_SET(144), 
@@ -620,11 +620,11 @@ const unsigned char OV2640_DSP_160x120[][2]=
 	VSIZE8,   VSIZE8_SET(1200), 
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
-	HSIZE,    HSIZE_SET(576), //0x90,
-	VSIZE,    VSIZE_SET(176), //0x2c,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1) | VHYX_HSIZE_SET(1),
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(160), 
 	ZMOH,     ZMOH_OUTH_SET(120), 
