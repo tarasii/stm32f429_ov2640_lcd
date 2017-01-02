@@ -189,7 +189,7 @@ void MCO1_Init(void)
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;  //UP
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	RCC_MCO1Config(RCC_MCO1Source_HSI, RCC_MCO1Div_1);// 16MHZ
+	//RCC_MCO1Config(RCC_MCO1Source_HSI, RCC_MCO1Div_1);// 16MHZ
 }
 
 void DCMI_0V2640_PWDN_Init(void)

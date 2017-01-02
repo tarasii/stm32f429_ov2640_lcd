@@ -235,10 +235,7 @@ void LCD_LayerInit(void)
   LTDC_Layer_InitStruct.LTDC_HorizontalStop = (LCD_PIXEL_WIDTH + 30 - 1); 
   LTDC_Layer_InitStruct.LTDC_VerticalStart = 4;
   LTDC_Layer_InitStruct.LTDC_VerticalStop = (LCD_PIXEL_HEIGHT + 4 - 1);
-//  LTDC_Layer_InitStruct.LTDC_HorizontalStart = 30 + 196;
-//  LTDC_Layer_InitStruct.LTDC_HorizontalStop = (196 + 408 + 30 - 1); 
-//  LTDC_Layer_InitStruct.LTDC_VerticalStart = 4+100;
-//  LTDC_Layer_InitStruct.LTDC_VerticalStop = (304+100 + 4 - 1);  
+  
   /* Pixel Format configuration*/
   LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_RGB565;
   /* Alpha constant (255 totally opaque) */
@@ -264,12 +261,9 @@ void LCD_LayerInit(void)
   start of the next line in bytes, then :
   Pitch = Active high width x number of bytes per pixel */ 
   LTDC_Layer_InitStruct.LTDC_CFBPitch = (LCD_PIXEL_WIDTH * 2);
-//  LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((408 * 2) + 3);
-//  LTDC_Layer_InitStruct.LTDC_CFBPitch = (408 * 2);
   
   /* Configure the number of lines */  
   LTDC_Layer_InitStruct.LTDC_CFBLineNumber = LCD_PIXEL_HEIGHT;
-  //LTDC_Layer_InitStruct.LTDC_CFBLineNumber = 304;
   
   /* Start Address configuration : the LCD Frame buffer is defined on SDRAM */    
   LTDC_Layer_InitStruct.LTDC_CFBStartAdress = LCD_FRAME_BUFFER;
@@ -281,21 +275,14 @@ void LCD_LayerInit(void)
   /* Start Address configuration : the LCD Frame buffer is defined on SDRAM w/ Offset */     
   LTDC_Layer_InitStruct.LTDC_CFBStartAdress = LCD_FRAME_BUFFER + BUFFER_OFFSET;
 
-//  LTDC_Layer_InitStruct.LTDC_HorizontalStart = 30;
-//  LTDC_Layer_InitStruct.LTDC_HorizontalStop = (LCD_PIXEL_WIDTH + 30 - 1); 
-//  LTDC_Layer_InitStruct.LTDC_VerticalStart = 4;
-//  LTDC_Layer_InitStruct.LTDC_VerticalStop = (LCD_PIXEL_HEIGHT + 4 - 1);
-//  LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((LCD_PIXEL_WIDTH * 2) + 3);
-//  LTDC_Layer_InitStruct.LTDC_CFBPitch = (LCD_PIXEL_WIDTH * 2);
-//  LTDC_Layer_InitStruct.LTDC_CFBLineNumber = LCD_PIXEL_HEIGHT;
-  LTDC_Layer_InitStruct.LTDC_HorizontalStart = 30 + 196;
-  LTDC_Layer_InitStruct.LTDC_HorizontalStop = (196 + 408 + 30 - 1); 
-  LTDC_Layer_InitStruct.LTDC_VerticalStart = 4+20;
-  LTDC_Layer_InitStruct.LTDC_VerticalStop = (304+20 + 4 - 1); 
-  LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((408 * 2) + 3);
-  LTDC_Layer_InitStruct.LTDC_CFBPitch = (408 * 2);
-  LTDC_Layer_InitStruct.LTDC_CFBLineNumber = 304;
-	
+  LTDC_Layer_InitStruct.LTDC_HorizontalStart = LCD_LAYER2_X0 + 30;
+  LTDC_Layer_InitStruct.LTDC_HorizontalStop = (LCD_LAYER2_X0 + LCD_LAYER2_PIXEL_WIDTH + 30 - 1); 
+  LTDC_Layer_InitStruct.LTDC_VerticalStart = LCD_LAYER2_Y0 + 4;
+  LTDC_Layer_InitStruct.LTDC_VerticalStop = (LCD_LAYER2_Y0 + LCD_LAYER2_PIXEL_HEIGHT + 4 - 1); 
+  LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((LCD_LAYER2_PIXEL_WIDTH * 2) + 3);
+  LTDC_Layer_InitStruct.LTDC_CFBPitch = (LCD_LAYER2_PIXEL_WIDTH * 2);
+  LTDC_Layer_InitStruct.LTDC_CFBLineNumber = LCD_LAYER2_PIXEL_HEIGHT;
+
   /* Configure blending factors */       
   LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_PAxCA;    
   LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_PAxCA;

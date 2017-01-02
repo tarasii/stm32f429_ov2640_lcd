@@ -3,7 +3,7 @@
 
 #define CHANGE_REG_NUM 167
 
-#define CLR_BAR_EN 1
+#define CLR_BAR_EN 0
 
 #define R_BYPASS    0x05 /* Bypass DSP */
 #define   DSP_BYPAS    0x01 /* Bypass DSP, sensor out directly */
@@ -207,6 +207,8 @@
 #define REG32       0x32 /* Common Control 32 */
 #define   REG32_PCLK_DIV_2    0x80 /* PCLK freq divided by 2 */
 #define   REG32_PCLK_DIV_4    0xC0 /* PCLK freq divided by 4 */
+#define   REG32_UXGA          0x36
+#define   REG32_SVGA          0x09
 #define ARCOM2      0x34 /* Zoom: Horizontal start point */
 #define REG45       0x45 /* Register 45 */
 #define FLL         0x46 /* Frame Length Adjustment LSBs */
@@ -233,8 +235,8 @@ const unsigned char OV2640_INIT[][2]=
 	
   BANK_SEL, BANK_SEL_SENS,
   0x3c,   0x32,
-  CLKRC,  0x00,
-  COM2,   0x02,
+  CLKRC,  CLKRC_DIV_SET(2), //0x00,  //!!!!!!!!!!!!!
+  COM2,   COM2_OCAP_Nx_SET(3), //0x02,
   REG04,  REG04_DEF | REG04_HREF_EN, //0x28,
   COM8,   COM8_DEF | COM8_BNDF_EN | COM8_AGC_EN | COM8_AEC_EN, //0xe5,
   COM9,   COM9_AGC_GAIN_8x | 0x08, //0x48,
@@ -262,9 +264,9 @@ const unsigned char OV2640_INIT[][2]=
   0x42, 	0x03,
   0x4a, 	0x81,
   0x21, 	0x99,
-  AEW,    0x3e, //0x40 //autoexposure
+  AEW,    0x40, //autoexposure //0x3e,
   AEB,    0x38, //
-  VV,     0x81, //0x82
+  VV,     VV_HIGH_TH_SET(0x08) | VV_LOW_TH_SET(0x02), //0x81, //0x82
   0x5c,   0x00,
   0x63,   0x00,
 	FLL,    0x22,
@@ -425,6 +427,8 @@ const unsigned char OV2640_YUV422[][2]=
 //  0x3C, 0x40,
 //  0xe1, 0x77,
 //  0x00, 0x00,
+//	R_DVP_SP,     0x08, //16 MHz !!!!!!!!!!!
+	R_DVP_SP,     0x10,	//0xd3, 0x10,	external XCLK 50MHz
 };
 
 const unsigned char OV2640_JPEG[][2]=
@@ -444,7 +448,7 @@ const unsigned char OV2640_SENS_INIT[][2]=
 {
 	BANK_SEL, BANK_SEL_SENS,
   //CLKRC, CLKRC_DIV_SET(2), //0x01,
-  COM7, COM7_RES_UXGA ,//| COM7_COLOR_BAR_TEST * CLR_BAR_EN, 
+  COM7, COM7_RES_UXGA | COM7_COLOR_BAR_TEST * CLR_BAR_EN, 
   HSTART, 0x11, 
   HEND, 0x75, 
   REG32, 0x36, 
@@ -464,6 +468,7 @@ const unsigned char OV2640_SENS_INIT[][2]=
   0x06, 0x02, //!!!!!!!!
   COM4, 0xb7,
 //  0x0e, 0x01
+
 };
 
 const unsigned char OV2640_DSP_640x480[][2]=
@@ -483,7 +488,6 @@ const unsigned char OV2640_DSP_640x480[][2]=
 	ZMOW,     ZMOW_OUTW_SET(640),
 	ZMOH,     ZMOH_OUTH_SET(480), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 	
 // 	  0xff,      0x00,
@@ -522,7 +526,6 @@ const unsigned char OV2640_DSP_480x320[][2]=
 	ZMOW,     ZMOW_OUTW_SET(480),
 	ZMOH,     ZMOH_OUTH_SET(320), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 	
 };
@@ -545,7 +548,6 @@ const unsigned char OV2640_DSP_408x304[][2]=
 	ZMOW,     ZMOW_OUTW_SET(408),
 	ZMOH,     ZMOH_OUTH_SET(304), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 	
 };
@@ -567,7 +569,6 @@ const unsigned char OV2640_DSP_352x288[][2]=
 	ZMOW,     ZMOW_OUTW_SET(352), //0x58,
 	ZMOH,     ZMOH_OUTH_SET(288), //0x48,
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 };
 
@@ -588,7 +589,6 @@ const unsigned char OV2640_DSP_320x200[][2]=
 	ZMOW,     ZMOW_OUTW_SET(320), 
 	ZMOH,     ZMOH_OUTH_SET(200), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 };
 
@@ -609,7 +609,6 @@ const unsigned char OV2640_DSP_176x144[][2]=
 	ZMOW,     ZMOW_OUTW_SET(176), 
 	ZMOH,     ZMOH_OUTH_SET(144), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 };
 
@@ -630,7 +629,6 @@ const unsigned char OV2640_DSP_160x120[][2]=
 	ZMOW,     ZMOW_OUTW_SET(160), 
 	ZMOH,     ZMOH_OUTH_SET(120), 
 	ZMHH,     0x00,
-	0xd3,     0x08,
 	RESET,    0x00
 
 };

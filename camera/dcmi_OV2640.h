@@ -35,29 +35,15 @@
 #define FSMC_LCD_ADDRESS    0x60020000
 
 
-/* Image Sizes enumeration */
-typedef enum   
-{
-  BMP_QQVGA             =   0x00,	    /* BMP Image QQVGA 160x120 Size */
-  BMP_QVGA              =   0x01,           /* BMP Image QVGA 320x240 Size */
-  JPEG_160x120          =   0x02,	    /* JPEG Image 160x120 Size */
-  JPEG_176x144          =   0x03,	    /* JPEG Image 176x144 Size */
-  JPEG_320x240          =   0x04,	    /* JPEG Image 320x240 Size */
-  JPEG_352x288          =   0x05,	    /* JPEG Image 352x288 Size */
-  JPEG_408x304          =   0x06,	    /* JPEG Image 408x304 Size */
-  JPEG_480x320          =   0x07,	    /* JPEG Image 480x320 Size */
-  JPEG_640x480          =   0x08	    /* JPEG Image 640x480 Size */
-}ImageFormat_TypeDef;
-
 typedef enum   
 {
   img_160x120          =   0x01,	    /* Image 160x120 Size */
-  img_176x144          =   0x02,	    /* Image 176x144 Size */
-  img_320x240          =   0x03,	    /* Image 320x240 Size */
-  img_352x288          =   0x04,	    /* Image 352x288 Size */
+  img_176x144          =   0x02,	    /* Image 176x144 Size (QCIF) */
+  img_320x240          =   0x03,	    /* Image 320x240 Size (QVGA) */
+  img_352x288          =   0x04,	    /* Image 352x288 Size (CIF) */
   img_408x304          =   0x05,	    /* Image 408x304 Size */
   img_480x320          =   0x06,	    /* Image 480x320 Size */
-  img_640x480          =   0x07	    /* Image 640x480 Size */
+  img_640x480          =   0x07	      /* Image 640x480 Size (VGA) */
 }OV2640_ImageResolution_TypeDef;
 
 /* Exported types ------------------------------------------------------------*/

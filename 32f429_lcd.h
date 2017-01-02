@@ -77,6 +77,16 @@ typedef struct
 #define  LCD_PIXEL_WIDTH    ((uint16_t)800)
 #define  LCD_PIXEL_HEIGHT   ((uint16_t)480)
 
+//#define  LCD_LAYER2_PIXEL_WIDTH    LCD_PIXEL_WIDTH
+//#define  LCD_LAYER2_PIXEL_HEIGHT   LCD_PIXEL_HEIGHT
+//#define  LCD_LAYER2_X0    				 0
+//#define  LCD_LAYER2_Y0  					 0
+
+#define  LCD_LAYER2_PIXEL_WIDTH    ((uint16_t)408)
+#define  LCD_LAYER2_PIXEL_HEIGHT   ((uint16_t)302)
+#define  LCD_LAYER2_X0    				 ((uint16_t)196)
+#define  LCD_LAYER2_Y0 						 ((uint16_t)20)
+
 #define LCD_FRAME_BUFFER       ((uint32_t)0xD0000000)
 #define BUFFER_OFFSET          ((uint32_t)0xEA600) 
 /**
