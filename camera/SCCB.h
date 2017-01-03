@@ -29,16 +29,12 @@
    not remain stuck if the I2C communication is corrupted.
    You may modify these timeout values depending on CPU frequency and application
    conditions (interrupts routines ...). */   
-#define SCCB_Open407V_FLAG_TIMEOUT         10000
 #define OV2640_DEVICE_WRITE_ADDRESS    0x60
 #define OV2640_DEVICE_READ_ADDRESS     0x61
 
 
-#define SCCB_SPEED               10000 //100000
-#define SCCB_SLAVE_ADDRESS7      0xFE
-
 /* Private function prototypes -----------------------------------------------*/
-void SCCB_GPIO_Config(void);
+void SCCB_GPIO_Init(void);
 uint8_t DCMI_SingleRandomWrite(uint8_t Addr, uint8_t Data);
 uint8_t DCMI_SingleRandomRead(uint8_t Addr, uint8_t *Data);
 

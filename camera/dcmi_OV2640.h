@@ -27,24 +27,8 @@
 #include "stm32f4xx.h"
 #include "camera/SCCB.h"
 #include "config.h"
+#include "dcmi.h"
 
-#define DCMI_DR_ADDRESS     0x50050028
-//#define DCMI_BUF_ADDRESS     0xD0200000
-#define DCMI_BUF_ADDRESS     0xD00EA600
-
-#define FSMC_LCD_ADDRESS    0x60020000
-
-
-typedef enum   
-{
-  img_160x120          =   0x01,	    /* Image 160x120 Size */
-  img_176x144          =   0x02,	    /* Image 176x144 Size (QCIF) */
-  img_320x240          =   0x03,	    /* Image 320x240 Size (QVGA) */
-  img_352x288          =   0x04,	    /* Image 352x288 Size (CIF) */
-  img_408x304          =   0x05,	    /* Image 408x304 Size */
-  img_480x320          =   0x06,	    /* Image 480x320 Size */
-  img_640x480          =   0x07	      /* Image 640x480 Size (VGA) */
-}OV2640_ImageResolution_TypeDef;
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct
@@ -62,7 +46,7 @@ typedef struct
    functions will be aborted and return error code (0xFF).
    The period of the delay will depend on the system operating frequency. The following
    value has been set for system running at 120MHz. */
-#define DCMI_TIMEOUT_MAX  10000
+//#define DCMI_TIMEOUT_MAX  10000
 
 /* Uncomment the line corresponding to the camera resolution */
 //#define QVGA_SIZE  /*320x240 */
@@ -166,14 +150,11 @@ void OV2640_Init(uint32_t bufsize);
 uint8_t DCMI_OV2640_ReadID(OV2640_IDTypeDef* OV2640ID);
 void OV2640_config_window(uint16_t startx, uint16_t starty, uint16_t width, uint16_t height);
 void OV2640_Reset(void);
-void OV2640_Config(OV2640_ImageResolution_TypeDef ImageRes);
+void OV2640_Config(ImageResolution_TypeDef ImageRes);
 void OV2640_BrightnessConfig(uint8_t Brightness);
 void OV2640_AutoExposure(uint8_t level);
-uint32_t OV2640_GetBufSize(OV2640_ImageResolution_TypeDef ImageRes);
-uint16_t OV2640_GetWidth(OV2640_ImageResolution_TypeDef ImageRes);
-uint16_t OV2640_GetHeight(OV2640_ImageResolution_TypeDef ImageRes);
 
-void EXTI_Config(void);
+
 #endif /* __DCMI_OV7670_H */
 
 

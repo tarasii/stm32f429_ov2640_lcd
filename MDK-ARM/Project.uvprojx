@@ -661,6 +661,16 @@
               <FileType>1</FileType>
               <FilePath>..\32f429_lcd.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>dcmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\dcmi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -1355,6 +1365,16 @@
               <FileName>32f429_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\32f429_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>dcmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\dcmi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2098,6 +2118,16 @@
               <FileType>1</FileType>
               <FilePath>..\32f429_lcd.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>dcmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\dcmi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -2839,6 +2869,16 @@
               <FileName>32f429_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\32f429_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>dcmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\dcmi.c</FilePath>
             </File>
           </Files>
         </Group>

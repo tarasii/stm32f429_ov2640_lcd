@@ -29,6 +29,7 @@
 
 #include "main.h"
 #include "usart.h"
+//#include "dcmi.h"
 #include "dcmi_OV2640.h"
 #include "32f429_lcd.h"
 #include "32f429_sdram.h"
@@ -47,7 +48,7 @@ static __IO uint32_t TimingDelay;
 
 void LCD_DisplayByte(uint16_t lnnum, uint16_t pos, uint8_t byte);
 void LCD_DisplayRawLine(uint16_t lnnum, uint8_t *buf);
-void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes);
+void LCD_DisplayBuf(uint8_t *buf, ImageResolution_TypeDef ImageRes);
 
 
 uint8_t jpg_flag=0;
@@ -75,7 +76,7 @@ int main(void)
        system_stm32f4xx.c file.
      */     
 	GPIO_InitTypeDef GPIO_InitStructure;
-	OV2640_ImageResolution_TypeDef cur_img_res;
+	ImageResolution_TypeDef cur_img_res;
 	OV2640_IDTypeDef OV2640ID;
 	RCC_ClocksTypeDef SYS_Clocks;
 	//uint32_t i=0;
@@ -117,7 +118,7 @@ int main(void)
 	//cur_img_res = img_160x120;
 	//cur_img_res = img_480x320;	
 	cur_img_res = img_408x304;
-	LCD_DrawRect(196-1, 20-1, OV2640_GetHeight(cur_img_res)+1, OV2640_GetWidth(cur_img_res)+1);	
+	LCD_DrawRect(196-1, 20-1, Resolution_GetHeight(cur_img_res)+1, Resolution_GetWidth(cur_img_res)+1);	
 	
 	//LCD_SetLayer(LCD_FOREGROUND_LAYER);	
 	LCD_SetFont(&Font8x12);
@@ -128,7 +129,7 @@ int main(void)
 	LCD_DrawRect(0,0,LCD_PIXEL_HEIGHT-1,LCD_PIXEL_WIDTH-1);
 
 	
-	OV2640_Init(OV2640_GetBufSize(cur_img_res)/2);
+	OV2640_Init(Resolution_GetBufSize(cur_img_res)/2);
 	Delay(1);		
 	if(DCMI_OV2640_ReadID(&OV2640ID)==0)
 	{	
@@ -255,12 +256,12 @@ void LCD_DisplayRawLine(uint16_t lnnum, uint8_t *buf)
 	}
 }
 
-void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
+void LCD_DisplayBuf(uint8_t *buf, ImageResolution_TypeDef ImageRes)
 {
 	uint16_t i,j;	
 	__IO uint16_t tmp;
 	uint32_t offs, joffs;
-	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
+	uint16_t xlen = Resolution_GetWidth(ImageRes), ylen = Resolution_GetHeight(ImageRes);
 	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
 	//uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER;
 
@@ -275,12 +276,12 @@ void LCD_DisplayBuf(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
 	}
 }
 
-void LCD_DisplayBufOld(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
+void LCD_DisplayBufOld(uint8_t *buf, ImageResolution_TypeDef ImageRes)
 {
 	uint16_t i,j;	
 	uint16_t tmp;
 	uint32_t offs, joffs;
-	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
+	uint16_t xlen = Resolution_GetWidth(ImageRes), ylen = Resolution_GetHeight(ImageRes);
 	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
 	//uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER;
 
@@ -297,12 +298,12 @@ void LCD_DisplayBufOld(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
 	}
 }
 
-void LCD_CopyBufToMem(uint8_t *buf, OV2640_ImageResolution_TypeDef ImageRes)
+void LCD_CopyBufToMem(uint8_t *buf, ImageResolution_TypeDef ImageRes)
 {
 	uint16_t i;	
 	__IO uint32_t tmp;
 	uint32_t LCD_ofset_buf = LCD_FRAME_BUFFER + BUFFER_OFFSET;
-	uint16_t xlen = OV2640_GetWidth(ImageRes), ylen = OV2640_GetHeight(ImageRes);
+	uint16_t xlen = Resolution_GetWidth(ImageRes), ylen = Resolution_GetHeight(ImageRes);
 
 	for(i=0; i<xlen*ylen/2; i++){
 		tmp = *(__IO uint32_t *) (buf + 4*i);
