@@ -1,27 +1,6 @@
-/**
-  ******************************************************************************
-  * @file    DCMI/OV7670_Camera/dcmi_OV7670.h
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
-  * @brief   Header for dcmi_OV7670.c module
-  ******************************************************************************
-  * @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************
-  */ 
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DCMI_OV7670_H
-#define __DCMI_OV7670_H
+#ifndef __DCMI_OV2640_H
+#define __DCMI_OV2640_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
@@ -41,16 +20,6 @@ typedef struct
 
 /* Exported constants --------------------------------------------------------*/
 
-/* Use this define to set the maximum delay timeout for the I2C DCMI_SingleRandomWrite()
-   and DCMI_SingleRandomRead() operations. Exeeding this timeout delay, the read/write 
-   functions will be aborted and return error code (0xFF).
-   The period of the delay will depend on the system operating frequency. The following
-   value has been set for system running at 120MHz. */
-//#define DCMI_TIMEOUT_MAX  10000
-
-/* Uncomment the line corresponding to the camera resolution */
-//#define QVGA_SIZE  /*320x240 */
-//#define VGA_SIZE  /* 640x480 */
 
 
 /* OV2640 Registers definition when DSP bank selected (0xFF = 0x00) */
@@ -155,8 +124,4 @@ void OV2640_BrightnessConfig(uint8_t Brightness);
 void OV2640_AutoExposure(uint8_t level);
 
 
-#endif /* __DCMI_OV7670_H */
-
-
-
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+#endif /* __DCMI_OV2640_H */

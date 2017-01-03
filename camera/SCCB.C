@@ -16,8 +16,6 @@
 #include "camera/SCCB.h"
 #include "I2C.h"
 
-//__IO uint32_t  DCMI_TIMEOUT_MAX = SCCB_Open407V_FLAG_TIMEOUT;
-
 /*******************************************************************************
 * Function Name  : SCCB_GPIO_Config
 * Description    : 
