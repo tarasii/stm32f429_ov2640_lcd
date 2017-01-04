@@ -26,8 +26,8 @@ typedef struct
 #define OV2640_DSP_R_BYPASS     0x05
 #define OV2640_DSP_Qs           0x44
 #define OV2640_DSP_CTRL         0x50
-#define OV2640_DSP_HSIZE1       0x51
-#define OV2640_DSP_VSIZE1       0x52
+#define OV2640_DSP_HSIZE        0x51
+#define OV2640_DSP_VSIZE        0x52
 #define OV2640_DSP_XOFFL        0x53
 #define OV2640_DSP_YOFFL        0x54
 #define OV2640_DSP_VHYX         0x55
@@ -41,8 +41,8 @@ typedef struct
 #define OV2640_DSP_CTRL2        0x86
 #define OV2640_DSP_CTRL3        0x87
 #define OV2640_DSP_SIZEL        0x8C
-#define OV2640_DSP_HSIZE2       0xC0
-#define OV2640_DSP_VSIZE2       0xC1
+#define OV2640_DSP_HSIZE8       0xC0
+#define OV2640_DSP_VSIZE8       0xC1
 #define OV2640_DSP_CTRL0        0xC2
 #define OV2640_DSP_CTRL1        0xC3
 #define OV2640_DSP_R_DVP_SP     0xD3

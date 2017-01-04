@@ -79,6 +79,7 @@ int main(void)
 	ImageResolution_TypeDef cur_img_res;
 	OV2640_IDTypeDef OV2640ID;
 	RCC_ClocksTypeDef SYS_Clocks;
+	uint8_t temp, tmp2;
 	//uint32_t i=0;
 	
 	if (SysTick_Config(SystemCoreClock / 1000))
@@ -99,16 +100,20 @@ int main(void)
 	printf("HCLK:%dM\r\n",SYS_Clocks.HCLK_Frequency/1000000);
 	printf("PCLK1:%dM\r\n",SYS_Clocks.PCLK1_Frequency/1000000);
 	printf("PCLK2:%dM\r\n",SYS_Clocks.PCLK2_Frequency/1000000);	
-	printf("\n\r DCMI Example\n\r");
+	printf("\n\r DCMI Example\n\r\n\r");
 		
   LCD_Init();
   
   /* LCD Layer initialization */
   LCD_LayerInit();
-    
+
+	printf("LAYER0:%x (%dx%d)\r\n", LCD_FRAME_BUFFER, LCD_PIXEL_WIDTH, LCD_PIXEL_HEIGHT);
+	printf("LAYER1:%x (%dx%d)\r\n", LCD_FRAME_BUFFER+BUFFER_OFFSET, LCD_LAYER2_PIXEL_WIDTH, LCD_LAYER2_PIXEL_HEIGHT);
+
+
   /* Enable the LTDC */
   LTDC_Cmd(ENABLE);
-
+	
 
 	LCD_SetLayer(LCD_BACKGROUND_LAYER);
 	//LCD_SetLayer(LCD_FOREGROUND_LAYER);		
@@ -124,29 +129,53 @@ int main(void)
 	LCD_SetFont(&Font8x12);
 	LCD_SetTextColor(LCD_COLOR_GREEN);
 	LCD_SetBackColor(LCD_COLOR_BLACK);
-	LCD_DisplayStringLine(LINE(0), (uint8_t*)"0123456789012345678901234567890123456789012345678901234567890"); 
-	LCD_DisplayStringLine(LINE(1), (uint8_t*)"  test "); 
+	LCD_DisplayStringLine(LINE(0), (uint8_t*)"01234567890"); 
+	//LCD_DisplayStringLine(LINE(1), (uint8_t*)"  test "); 
 	LCD_DrawRect(0,0,LCD_PIXEL_HEIGHT-1,LCD_PIXEL_WIDTH-1);
 
-	
 	OV2640_Init(Resolution_GetBufSize(cur_img_res)/2);
-	Delay(1);		
+	Delay(1);	
+	
 	if(DCMI_OV2640_ReadID(&OV2640ID)==0)
 	{	
 		if(OV2640ID.Manufacturer_ID1==0x7f && OV2640ID.Manufacturer_ID2==0xa2 
 			&& OV2640ID.Version==0x26 && OV2640ID.PID==0x42){
  			printf("OV2640 ID:0x%x 0x%x 0x%x 0x%x\r\n",
  				OV2640ID.Manufacturer_ID1, OV2640ID.Manufacturer_ID2, OV2640ID.PID, OV2640ID.Version);
+
+				
+			OV2640_Config(cur_img_res);
+			OV2640_BrightnessConfig(0x20);	
+			OV2640_AutoExposure(2);	
+			Delay(10);
+			
+			DCMI_SingleRandomWrite(OV2640_DSP_RA_DLMT, 0x0);
+
+			DCMI_SingleRandomRead(OV2640_DSP_CTRL, &temp);
+			printf("DCMI DSP_CTRL:%02x\r\n", temp);
+			DCMI_SingleRandomRead(OV2640_DSP_VHYX, &tmp2);	
+			printf("DCMI DSP_VHYX:%02x\r\n", tmp2);
+			DCMI_SingleRandomRead(OV2640_DSP_HSIZE, &temp);
+			printf("DCMI DSP_HSIZE:%02x %d\r\n", temp, ((tmp2 & 0x08) << 5 | temp)*4);
+			DCMI_SingleRandomRead(OV2640_DSP_VSIZE, &temp);
+			printf("DCMI DSP_VSIZE:%02x %d\r\n", temp, ((tmp2 & 0x80) << 1 | temp)*4);
+
+			DCMI_SingleRandomRead(OV2640_DSP_HSIZE8, &temp);
+			printf("DCMI DSP_HSIZE8:%02x %d\r\n", temp, temp*8);
+			DCMI_SingleRandomRead(OV2640_DSP_VSIZE8, &temp);
+			printf("DCMI DSP_VSIZE8:%02x %d\r\n", temp, temp*8);
+
+			DCMI_SingleRandomRead(OV2640_DSP_ZMOW, &temp);
+			printf("DCMI DSP_ZMOW:%02x %d\r\n", temp, temp*4);
+			DCMI_SingleRandomRead(OV2640_DSP_ZMOH, &temp);
+			printf("DCMI DSP_ZMOH:%02x %d\r\n", temp, temp*4);	
+			
 		}
 		else{
  			printf("OV2640 ID is Error!\r\n");
 		}			
 	}	
 	
-	OV2640_Config(cur_img_res);
-	OV2640_BrightnessConfig(0x20);	
-	OV2640_AutoExposure(2);	
-	Delay(10);
 	
 	RCC_APB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
