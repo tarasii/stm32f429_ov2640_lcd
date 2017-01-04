@@ -29,7 +29,6 @@
 
 #include "main.h"
 #include "usart.h"
-//#include "dcmi.h"
 #include "dcmi_OV2640.h"
 #include "32f429_lcd.h"
 #include "32f429_sdram.h"
