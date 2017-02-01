@@ -3,8 +3,12 @@
 @par Example Description
 
 This example fully based on WaveShare and STMicroelectronics examples
-Example shows how to make OV2640 camera output on 800x600 LCD with Open429I-C devboard.
+Example shows how to make OV2640 camera 480x320 output on 800x480 LCD with Open429I-C devboard.
+DCMI uses DMA doublebuffer mode. (Max resolution without double buffer is 408x302)
 Example runs on STM32F429
+
+Example uses STM32F4xx_DSP_StdPeriph_Lib_V1.6.1 
+Just git clone in STM32F4xx_DSP_StdPeriph_Lib_V1.6.1\Project\ folder
 
 The USARTx is configured as follows:
     - BaudRate = 115200 baud  
