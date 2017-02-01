@@ -159,7 +159,12 @@ void DCMI_DMA_Init(uint32_t bufsize)
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-     
+
+	DMA_SetCurrDataCounter(DMA2_Stream1, bufsize);
+	DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), DMA_Memory_0);
+	DMA_DoubleBufferModeConfig (DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + bufsize*4), DMA_Memory_0);
+	DMA_DoubleBufferModeCmd (DMA2_Stream1, ENABLE);
+	
   DMA_Init(DMA2_Stream1, &DMA_InitStructure); 
 
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);

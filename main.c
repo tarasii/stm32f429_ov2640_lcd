@@ -120,9 +120,10 @@ int main(void)
 	
 	LCD_SetTextColor(LCD_COLOR_GREEN);	
 	//cur_img_res = img_160x120;
-	//cur_img_res = img_480x320;	
-	cur_img_res = img_408x304;
-	LCD_DrawRect(196-1, 20-1, Resolution_GetHeight(cur_img_res)+1, Resolution_GetWidth(cur_img_res)+1);	
+	cur_img_res = img_480x320;	
+	//cur_img_res = img_408x304;
+	//LCD_DrawRect(196-1, 20-1, Resolution_GetHeight(cur_img_res)+1, Resolution_GetWidth(cur_img_res)+1);	
+	LCD_DrawRect(LCD_LAYER2_X0-1, LCD_LAYER2_Y0-1, LCD_LAYER2_PIXEL_HEIGHT+1, LCD_LAYER2_PIXEL_WIDTH+1);	
 	
 	//LCD_SetLayer(LCD_FOREGROUND_LAYER);	
 	LCD_SetFont(&Font8x12);
@@ -132,7 +133,7 @@ int main(void)
 	//LCD_DisplayStringLine(LINE(1), (uint8_t*)"  test "); 
 	LCD_DrawRect(0,0,LCD_PIXEL_HEIGHT-1,LCD_PIXEL_WIDTH-1);
 
-	OV2640_Init(Resolution_GetBufSize(cur_img_res)/2);
+	OV2640_Init(Resolution_GetBufSize(cur_img_res)/4);
 	Delay(1);	
 	
 	if(DCMI_OV2640_ReadID(&OV2640ID)==0)

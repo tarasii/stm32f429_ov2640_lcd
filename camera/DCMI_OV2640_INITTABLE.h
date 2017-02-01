@@ -428,7 +428,8 @@ const unsigned char OV2640_YUV422[][2]=
 //  0xe1, 0x77,
 //  0x00, 0x00,
 //	R_DVP_SP,     0x08, //16 MHz !!!!!!!!!!!
-	R_DVP_SP,     0x10,	//0xd3, 0x10,	external XCLK 50MHz
+	R_DVP_SP,     0x08,	
+	//0xd3, 0x10,	external XCLK 50MHz
 };
 
 const unsigned char OV2640_JPEG[][2]=
@@ -632,5 +633,27 @@ const unsigned char OV2640_DSP_160x120[][2]=
 	RESET,    0x00
 
 };
+
+const unsigned char OV2640_DSP_800x600[][2]=
+{
+	BANK_SEL, BANK_SEL_DSP,
+	RESET,    RESET_DVP,
+	HSIZE8,   HSIZE8_SET(1600), 
+	VSIZE8,   VSIZE8_SET(1200), 
+	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
+	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
+	HSIZE,    HSIZE_SET(1600), //0x90,
+	VSIZE,    VSIZE_SET(1200), //0x2c,
+	XOFFL,    0x00,
+	YOFFL,    0x00,
+	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	TEST,     0x00,
+	ZMOW,     ZMOW_OUTW_SET(800), 
+	ZMOH,     ZMOH_OUTH_SET(600), 
+	ZMHH,     0x00,
+	RESET,    0x00
+
+};
+
 
 #endif

@@ -261,6 +261,14 @@ void OV2640_Config(ImageResolution_TypeDef ImageRes)
       }		
       break;
     }
+    case img_800x600:
+    {
+			for(i=0; i<(sizeof(OV2640_DSP_800x600)/2); i++)
+      {
+        DCMI_SingleRandomWrite(OV2640_DSP_800x600[i][0], OV2640_DSP_800x600[i][1]);
+      }		
+      break;
+    }
     default:
     {
 			for(i=0; i<(sizeof(OV2640_DSP_352x288)/2); i++)

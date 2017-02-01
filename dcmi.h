@@ -20,8 +20,9 @@ typedef enum
   img_320x240          =   0x03,	    /* Image 320x240 Size (QVGA) */
   img_352x288          =   0x04,	    /* Image 352x288 Size (CIF) */
   img_408x304          =   0x05,	    /* Image 408x304 Size */
-  img_480x320          =   0x06,	    /* Image 480x320 Size */
-  img_640x480          =   0x07	      /* Image 640x480 Size (VGA) */
+  img_480x320          =   0x06,	    /* Image 480x320 Size (HVGA)*/
+  img_640x480          =   0x07,	    /* Image 640x480 Size (VGA) */
+  img_800x600          =   0x08	      /* Image 800x600 Size (SVGA) */
 }ImageResolution_TypeDef;
 
 /* Exported types ------------------------------------------------------------*/
