@@ -147,7 +147,7 @@ void DCMI_DMA_Init(uint32_t bufsize)
   DMA_InitStructure.DMA_Channel = DMA_Channel_1;  
   DMA_InitStructure.DMA_PeripheralBaseAddr = DCMI_DR_ADDRESS;		
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t) (DCMI_BUF_ADDRESS); 
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
   DMA_InitStructure.DMA_BufferSize = bufsize; 
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;//因为是传进数组，所以要启用自增
@@ -160,10 +160,10 @@ void DCMI_DMA_Init(uint32_t bufsize)
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
 
-	DMA_SetCurrDataCounter(DMA2_Stream1, bufsize);
-	DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), DMA_Memory_0);
-	DMA_DoubleBufferModeConfig (DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + bufsize*4), DMA_Memory_0);
-	DMA_DoubleBufferModeCmd (DMA2_Stream1, ENABLE);
+  DMA_SetCurrDataCounter(DMA2_Stream1, bufsize);
+  DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), DMA_Memory_0);
+  DMA_DoubleBufferModeConfig (DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + bufsize*4), DMA_Memory_0);
+  DMA_DoubleBufferModeCmd (DMA2_Stream1, ENABLE);
 	
   DMA_Init(DMA2_Stream1, &DMA_InitStructure); 
 
@@ -219,7 +219,12 @@ uint32_t Resolution_GetBufSize(ImageResolution_TypeDef ImageRes)
 			res = 640*480;
       break;
     }
-    default:
+    case img_800x600:
+    {
+			res = 800*600;
+      break;
+    }    
+	default:
     {
 			res = 352*288;
       break;
@@ -270,7 +275,12 @@ uint16_t Resolution_GetWidth(ImageResolution_TypeDef ImageRes)
 			res = 640;
       break;
     }
-    default:
+    case img_800x600:
+    {
+			res = 800;
+      break;
+    }    
+	default:
     {
 			res = 352;
       break;
@@ -318,6 +328,11 @@ uint16_t Resolution_GetHeight(ImageResolution_TypeDef ImageRes)
     case img_640x480:
     {
 			res = 480;
+      break;
+    }
+    case img_800x600:
+    {
+			res = 600;
       break;
     }
     default:
