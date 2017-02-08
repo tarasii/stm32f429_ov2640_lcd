@@ -55,7 +55,11 @@ uint8_t jpg_flag=0;
 uint8_t key_flag=0;
 uint16_t lncnt=0;
 uint16_t lnmax=0;
+uint16_t fps=0;
 uint8_t dcim_flag=0;
+
+__IO uint16_t systick_ms = 0, toggle_ms = 0;
+
 
 #define GPIO_WAKEUP_CLK    RCC_AHB1Periph_GPIOA
 #define GPIO_WAKEUP_PORT   GPIOA
@@ -231,8 +235,17 @@ int main(void)
   while (1)
   {
 
-			sprintf(strDisp, "ln:%d ", lnmax);				
-			LCD_DisplayStringLine(LINE(3), (uint8_t*)strDisp); 				
+			if ((systick_ms - toggle_ms) > 1000)
+			{
+				toggle_ms = systick_ms;
+				sprintf(strDisp, "ln:%d ", lnmax);				
+				LCD_DisplayStringLine(LINE(3), (uint8_t*)strDisp);
+
+				sprintf(strDisp, "fps:%d ", fps);				
+				LCD_DisplayStringLine(LINE(4), (uint8_t*)strDisp);
+				
+				fps=0;
+			} 				
 		
 		//	if(GPIO_ReadInputDataBit(GPIO_WAKEUP_PORT,GPIO_WAKEUP_PIN))
 //		{
@@ -299,6 +312,7 @@ void TimingDelay_Decrement(void)
   { 
     TimingDelay--;
   }
+	systick_ms++;
 }
 
 void LCD_DisplayByte(uint16_t lnnum, uint16_t pos, uint8_t byte)

@@ -154,12 +154,14 @@ extern uint8_t key_flag;
 extern uint8_t dcim_flag;
 extern uint16_t lncnt;
 extern uint16_t lnmax;
+extern uint16_t fps;
 void DCMI_IRQHandler(void)
 {  	   
 	if (DCMI_GetITStatus(DCMI_IT_FRAME) != RESET) {		
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 	
 		GPIO_TOGGLE(LED1_GPIO_Port, LED1_Pin);		
 		dcim_flag = 0;
+		fps++;
 	}
 
 	if (DCMI_GetITStatus(DCMI_IT_LINE) != RESET){
