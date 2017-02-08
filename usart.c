@@ -76,7 +76,7 @@ void USART_Config(void)
 
 
 //	USART1->BRR = 0x0fa;
-	USART1->BRR = 0x030d;
+//	USART1->BRR = 0x030d;
 
 }
 

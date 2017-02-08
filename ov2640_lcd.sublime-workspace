@@ -11,7 +11,7 @@
 			"file": "32f429_lcd.c",
 			"settings":
 			{
-				"buffer_size": 50860,
+				"buffer_size": 50125,
 				"line_ending": "Windows"
 			}
 		}
@@ -95,7 +95,7 @@
 					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 50860,
+						"buffer_size": 50125,
 						"regions":
 						{
 						},
@@ -112,7 +112,7 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": -0.0,
+						"translation.x": 0.0,
 						"translation.y": 4365.0,
 						"zoom_level": 1.0
 					},

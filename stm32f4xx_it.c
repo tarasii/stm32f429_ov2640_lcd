@@ -29,6 +29,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
+#include "pin.h"
+#include "dcmi.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -149,13 +151,57 @@ void SysTick_Handler(void)
 }
 extern uint8_t jpg_flag;
 extern uint8_t key_flag;
+extern uint8_t dcim_flag;
+extern uint16_t lncnt;
+extern uint16_t lnmax;
 void DCMI_IRQHandler(void)
 {  	   
-	if (DCMI_GetITStatus(DCMI_IT_FRAME) != RESET) 
-	{		
-		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 			
-		jpg_flag = 1;
-	}	
+	if (DCMI_GetITStatus(DCMI_IT_FRAME) != RESET) {		
+		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 	
+		GPIO_TOGGLE(LED1_GPIO_Port, LED1_Pin);		
+		dcim_flag = 0;
+	}
+
+	if (DCMI_GetITStatus(DCMI_IT_LINE) != RESET){
+		DCMI_ClearFlag(DCMI_FLAG_LINERI);
+		GPIO_TOGGLE(LED2_GPIO_Port, LED2_Pin);
+		lncnt++;
+	}
+	
+	if (DCMI_GetITStatus(DCMI_IT_VSYNC) != RESET){
+		DCMI_ClearFlag(DCMI_FLAG_VSYNCRI);
+		GPIO_TOGGLE(LED3_GPIO_Port, LED3_Pin);
+    lnmax = lncnt;
+		lncnt = 0;		
+	}
+	
+}
+
+void DMA2_Stream1_IRQHandler (void)
+{
+	uint32_t cur_mb;
+	cur_mb = DMA_GetCurrentMemoryTarget(DMA2_Stream1);
+	if (cur_mb == DMA_Memory_0) cur_mb = DMA_Memory_1; else cur_mb = DMA_Memory_0;
+	
+	if (DMA_GetITStatus(DMA2_Stream1, DMA_IT_TCIF1) == SET)
+	{
+		DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
+		GPIO_TOGGLE(LED4_GPIO_Port, LED4_Pin);
+		if (dcim_flag == 0) {
+				DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + 640 * 480), cur_mb);
+		}
+		if (dcim_flag == 1) {
+				DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + 640 * 480 * 3 / 2), cur_mb);
+		}
+		if (dcim_flag == 2) {
+				DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), cur_mb);
+		}
+		if (dcim_flag == 3) {
+				DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + 640 * 480 / 2), cur_mb);
+		}
+		dcim_flag++;
+		if (dcim_flag > 3) dcim_flag = 0;
+	}
 }
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */

@@ -32,6 +32,7 @@
 #include "dcmi_OV2640.h"
 #include "32f429_lcd.h"
 #include "32f429_sdram.h"
+#include "pin.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -52,7 +53,9 @@ void LCD_DisplayBuf(uint8_t *buf, ImageResolution_TypeDef ImageRes);
 
 uint8_t jpg_flag=0;
 uint8_t key_flag=0;
-
+uint16_t lncnt=0;
+uint16_t lnmax=0;
+uint8_t dcim_flag=0;
 
 #define GPIO_WAKEUP_CLK    RCC_AHB1Periph_GPIOA
 #define GPIO_WAKEUP_PORT   GPIOA
@@ -79,6 +82,7 @@ int main(void)
 	OV2640_IDTypeDef OV2640ID;
 	RCC_ClocksTypeDef SYS_Clocks;
 	uint8_t temp, tmp2;
+	char strDisp[25]; 
 	//uint32_t i=0;
 	
 	if (SysTick_Config(SystemCoreClock / 1000))
@@ -95,12 +99,36 @@ int main(void)
 		
 	USART_SendData(USART1, (uint8_t) 'Z');
 		
+	printf("\r\nHSE:%dM\r\n",HSE_VALUE/1000000);
 	printf("\r\nSYSCLK:%dM\r\n",SYS_Clocks.SYSCLK_Frequency/1000000);
 	printf("HCLK:%dM\r\n",SYS_Clocks.HCLK_Frequency/1000000);
 	printf("PCLK1:%dM\r\n",SYS_Clocks.PCLK1_Frequency/1000000);
 	printf("PCLK2:%dM\r\n",SYS_Clocks.PCLK2_Frequency/1000000);	
 	printf("\n\r DCMI Example\n\r\n\r");
-		
+
+
+	RCC_APB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_WAKEUP_PIN;
+	GPIO_Init(GPIO_WAKEUP_PORT, &GPIO_InitStructure);
+
+	/* leds */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = LED1_Pin | LED2_Pin | LED3_Pin | LED4_Pin;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;  
+	GPIO_Init(LED1_GPIO_Port, &GPIO_InitStructure);
+	
+	GPIO_LOW(LED1_GPIO_Port, LED1_Pin);
+	GPIO_LOW(LED2_GPIO_Port, LED2_Pin);
+	GPIO_LOW(LED3_GPIO_Port, LED3_Pin);
+	GPIO_LOW(LED4_GPIO_Port, LED4_Pin);
+	
   LCD_Init();
   
   /* LCD Layer initialization */
@@ -120,20 +148,25 @@ int main(void)
 	
 	LCD_SetTextColor(LCD_COLOR_GREEN);	
 	//cur_img_res = img_160x120;
-	cur_img_res = img_480x320;	
-	//cur_img_res = img_408x304;
+	//cur_img_res = img_408x304;	
+	//cur_img_res = img_480x320;	
+	cur_img_res = img_640x480;	
+	//cur_img_res = img_800x600;	
 	//LCD_DrawRect(196-1, 20-1, Resolution_GetHeight(cur_img_res)+1, Resolution_GetWidth(cur_img_res)+1);	
-	LCD_DrawRect(LCD_LAYER2_X0-1, LCD_LAYER2_Y0-1, LCD_LAYER2_PIXEL_HEIGHT+1, LCD_LAYER2_PIXEL_WIDTH+1);	
+	//LCD_DrawRect(LCD_LAYER2_X0-1, LCD_LAYER2_Y0-1, LCD_LAYER2_PIXEL_HEIGHT+1, LCD_LAYER2_PIXEL_WIDTH+1);	
 	
 	//LCD_SetLayer(LCD_FOREGROUND_LAYER);	
 	LCD_SetFont(&Font8x12);
 	LCD_SetTextColor(LCD_COLOR_GREEN);
 	LCD_SetBackColor(LCD_COLOR_BLACK);
-	LCD_DisplayStringLine(LINE(0), (uint8_t*)"01234567890"); 
+	LCD_DisplayStringLine(LINE(0), (uint8_t*)"OV2640 test"); 
 	//LCD_DisplayStringLine(LINE(1), (uint8_t*)"  test "); 
-	LCD_DrawRect(0,0,LCD_PIXEL_HEIGHT-1,LCD_PIXEL_WIDTH-1);
+	//LCD_DrawRect(0,0,LCD_PIXEL_HEIGHT-1,LCD_PIXEL_WIDTH-1);
 
-	OV2640_Init(Resolution_GetBufSize(cur_img_res)/4);
+	//OV2640_Init(Resolution_GetBufSize(cur_img_res)/4);
+	OV2640_Init(Resolution_GetBufSize(cur_img_res)/8);
+	//OV2640_Init(640*480/8);
+	//OV2640_Init(800*300/4);
 	Delay(1);	
 	
 	if(DCMI_OV2640_ReadID(&OV2640ID)==0)
@@ -143,6 +176,9 @@ int main(void)
  			printf("OV2640 ID:0x%x 0x%x 0x%x 0x%x\r\n",
  				OV2640ID.Manufacturer_ID1, OV2640ID.Manufacturer_ID2, OV2640ID.PID, OV2640ID.Version);
 
+			sprintf(strDisp, "ID:0x%02x%02x ", OV2640ID.Manufacturer_ID1, OV2640ID.Manufacturer_ID2);				
+			LCD_DisplayStringLine(LINE(1), (uint8_t*)strDisp); 				
+				
 				
 			OV2640_Config(cur_img_res);
 			OV2640_BrightnessConfig(0x20);	
@@ -167,9 +203,12 @@ int main(void)
 
 			DCMI_SingleRandomRead(OV2640_DSP_ZMOW, &temp);
 			printf("DCMI DSP_ZMOW:%02x %d\r\n", temp, temp*4);
-			DCMI_SingleRandomRead(OV2640_DSP_ZMOH, &temp);
-			printf("DCMI DSP_ZMOH:%02x %d\r\n", temp, temp*4);	
-			
+			DCMI_SingleRandomRead(OV2640_DSP_ZMOH, &tmp2);
+			printf("DCMI DSP_ZMOH:%02x %d\r\n", tmp2, tmp2*4);	
+
+			sprintf(strDisp, "%dx%d ", temp*4, tmp2*4);				
+			LCD_DisplayStringLine(LINE(2), (uint8_t*)strDisp); 				
+
 		}
 		else{
  			printf("OV2640 ID is Error!\r\n");
@@ -191,7 +230,11 @@ int main(void)
 	
   while (1)
   {
-//	if(GPIO_ReadInputDataBit(GPIO_WAKEUP_PORT,GPIO_WAKEUP_PIN))
+
+			sprintf(strDisp, "ln:%d ", lnmax);				
+			LCD_DisplayStringLine(LINE(3), (uint8_t*)strDisp); 				
+		
+		//	if(GPIO_ReadInputDataBit(GPIO_WAKEUP_PORT,GPIO_WAKEUP_PIN))
 //		{
 //		 key_flag = 1;
 

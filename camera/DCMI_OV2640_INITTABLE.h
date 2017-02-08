@@ -5,6 +5,9 @@
 
 #define CLR_BAR_EN 0
 
+#define DSP_WIDTH = 1600
+#define DSP_HEIGHT = 1200
+
 #define R_BYPASS    0x05 /* Bypass DSP */
 #define   DSP_BYPAS    0x01 /* Bypass DSP, sensor out directly */
 #define   USE_DSP      0x00 /* Use the internal DSP */
@@ -16,8 +19,11 @@
 #define   CTRLI_H_DIV_SET(x)     (x & 0x03)
 #define HSIZE       0x51 /* H_SIZE[7:0] (real/4) */
 #define   HSIZE_SET(x)          ((x >> 2) & 0xFF)
+//#define   HSIZE_SETX         (DSP_WIDTH >> 2) & 0xFF
+//#define   HSIZE_SETX(x)          (HSIZE_SET(DSP_WIDTH))
 #define VSIZE       0x52 /* V_SIZE[7:0] (real/4) */
 #define   VSIZE_SET(x)          ((x >> 2) & 0xFF)
+//#define   VSIZE_SET          ((DSP_HEIGHT >> 2) & 0xFF)
 #define XOFFL       0x53 /* OFFSET_X[7:0] */
 #define   XOFFL_SET(x)           (x & 0xFF)
 #define YOFFL       0x54 /* OFFSET_Y[7:0] */
@@ -25,6 +31,8 @@
 #define VHYX        0x55 /* Offset and size completion */
 #define   VHYX_VSIZE_SET(x)     (((x >> 2) & 0x100) >> 1)
 #define   VHYX_HSIZE_SET(x)     (((x >> 2) & 0x100) >> 5)
+//#define   VHYX_VSIZE_SET     (((DSP_WIDTH >> 2) & 0x100) >> 1)
+//#define   VHYX_HSIZE_SET     (((DSP_HEIGHT >> 2) & 0x100) >> 5)
 #define   VHYX_YOFF_SET(x)       ((x & 0x07) << 4)
 #define   VHYX_XOFF_SET(x)        (x & 0x07)
 #define DPRP        0x56
@@ -55,8 +63,10 @@
 #define   SIZEL_VSIZE8_SET(x)      (x & 0x07)
 #define HSIZE8      0xC0 /* Image Horizontal Size HSIZE[10:3] */
 #define   HSIZE8_SET(x)         ((x >> 3) & 0xFF)
+//#define   HSIZE8_SET         ((DSP_WIDTH >> 3) & 0xFF)
 #define VSIZE8      0xC1 /* Image Vertical Size VSIZE[10:3] */
 #define   VSIZE8_SET(x)         ((x >> 3) & 0xFF)
+//#define   VSIZE8_SET         ((DSP_HEIGHT >> 3) & 0xFF)
 #define CTRL0       0xC2 /* DSP Module enable 0 */
 #define   CTRL0_AEC_EN       0x80
 #define   CTRL0_AEC_SEL      0x40
@@ -428,7 +438,7 @@ const unsigned char OV2640_YUV422[][2]=
 //  0xe1, 0x77,
 //  0x00, 0x00,
 //	R_DVP_SP,     0x08, //16 MHz !!!!!!!!!!!
-	R_DVP_SP,     0x08,	
+//	R_DVP_SP,     0x10,	
 	//0xd3, 0x10,	external XCLK 50MHz
 };
 
@@ -489,25 +499,9 @@ const unsigned char OV2640_DSP_640x480[][2]=
 	ZMOW,     ZMOW_OUTW_SET(640),
 	ZMOH,     ZMOH_OUTH_SET(480), 
 	ZMHH,     0x00,
+	R_DVP_SP,     0x04,
 	RESET,    0x00
-	
-// 	  0xff,      0x00,
-//      0xe0,      0x04,
-//      0xc0,      0xc8,
-//      0xc1,      0x96,
-//      0x86,      0x3d,
-//      0x50,      0x89,
-//      0x51,      0x90,
-//      0x52,      0x2c,
-//      0x53,      0x00,
-//      0x54,      0x00,
-//      0x55,      0x88,
-//      0x57,      0x00,
-//      0x5a,      0xa0,
-//      0x5b,      0x78,
-//      0x5c,      0x00,
-//      0xd3,      0x04,
-//      0xe0,      0x00	
+
 };
 
 const unsigned char OV2640_DSP_480x320[][2]=
@@ -522,11 +516,12 @@ const unsigned char OV2640_DSP_480x320[][2]=
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(480),
 	ZMOH,     ZMOH_OUTH_SET(320), 
 	ZMHH,     0x00,
+	R_DVP_SP,     0x08,	
 	RESET,    0x00
 	
 };
@@ -542,6 +537,8 @@ const unsigned char OV2640_DSP_408x304[][2]=
 	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(1) | CTRLI_H_DIV_SET(1), //0x89,
 	HSIZE,    HSIZE_SET(1600), //0x90,
 	VSIZE,    VSIZE_SET(1200), //0x2c,
+//	HSIZE,    HSIZE_SET(1600), //0x90,
+//	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
 	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
@@ -549,6 +546,7 @@ const unsigned char OV2640_DSP_408x304[][2]=
 	ZMOW,     ZMOW_OUTW_SET(408),
 	ZMOH,     ZMOH_OUTH_SET(304),  	
 	ZMHH,     0x00,
+	R_DVP_SP,     0x08,		
 	RESET,    0x00
 	
 };
@@ -565,7 +563,7 @@ const unsigned char OV2640_DSP_352x288[][2]=
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(352), //0x58,
 	ZMOH,     ZMOH_OUTH_SET(288), //0x48,
@@ -585,7 +583,7 @@ const unsigned char OV2640_DSP_320x200[][2]=
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(320), 
 	ZMOH,     ZMOH_OUTH_SET(200), 
@@ -605,7 +603,7 @@ const unsigned char OV2640_DSP_176x144[][2]=
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(176), 
 	ZMOH,     ZMOH_OUTH_SET(144), 
@@ -625,7 +623,7 @@ const unsigned char OV2640_DSP_160x120[][2]=
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(160), 
 	ZMOH,     ZMOH_OUTH_SET(120), 
@@ -636,21 +634,23 @@ const unsigned char OV2640_DSP_160x120[][2]=
 
 const unsigned char OV2640_DSP_800x600[][2]=
 {
+	
 	BANK_SEL, BANK_SEL_DSP,
 	RESET,    RESET_DVP,
-	HSIZE8,   HSIZE8_SET(1600), 
-	VSIZE8,   VSIZE8_SET(1200), 
+	HSIZE8,   HSIZE8_SET(1600), //0xc8,
+	VSIZE8,   VSIZE8_SET(1200), //0x96,
 	CTRL2,    CTRL2_DCW_EN | CTRL2_SDE_EN | CTRL2_UV_AVG_EN | CTRL2_UV_ADJ_EN | CTRL2_CMX_EN, //0x35,
-	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(2) | CTRLI_H_DIV_SET(2), //0x92,
+	CTRLI,    CTRLI_LP_DP | CTRLI_V_DIV_SET(1) | CTRLI_H_DIV_SET(1), //0x89,
 	HSIZE,    HSIZE_SET(1600), //0x90,
 	VSIZE,    VSIZE_SET(1200), //0x2c,
 	XOFFL,    0x00,
 	YOFFL,    0x00,
-	VHYX,     VHYX_VSIZE_SET(1600) | VHYX_HSIZE_SET(1200) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
+	VHYX,     VHYX_VSIZE_SET(1200) | VHYX_HSIZE_SET(1600) | VHYX_XOFF_SET(0) | VHYX_YOFF_SET(0),
 	TEST,     0x00,
 	ZMOW,     ZMOW_OUTW_SET(800), 
 	ZMOH,     ZMOH_OUTH_SET(600), 
 	ZMHH,     0x00,
+	R_DVP_SP, 0x02,		
 	RESET,    0x00
 
 };

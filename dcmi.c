@@ -47,9 +47,11 @@
 	
 void DCMI_GPIO_Init(void)
 {
- DCMI_InitTypeDef DCMI_InitStructure;
+	DCMI_InitTypeDef DCMI_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
   NVIC_InitTypeDef NVIC_InitStructure;
+	DCMI_CROPInitTypeDef DCMI_Crop;
+	
   /* Enable DCMI GPIOs clocks */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC |
                          RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE | RCC_AHB1Periph_GPIOI, ENABLE);
@@ -98,7 +100,8 @@ void DCMI_GPIO_Init(void)
   /* PCLK(PA6) */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  //GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN ; 
   GPIO_Init(GPIOA, &GPIO_InitStructure);
   
   /* DCMI configuration *******************************************************/ 
@@ -108,14 +111,24 @@ void DCMI_GPIO_Init(void)
   DCMI_InitStructure.DCMI_PCKPolarity = DCMI_PCKPolarity_Rising;//DCMI_PCKPolarity_Falling
   DCMI_InitStructure.DCMI_VSPolarity = DCMI_VSPolarity_Low; //DCMI_VSPolarity_High
   DCMI_InitStructure.DCMI_HSPolarity = DCMI_HSPolarity_Low; //DCMI_HSPolarity_High
-  DCMI_InitStructure.DCMI_CaptureRate = DCMI_CaptureRate_All_Frame;//DCMI_CaptureRate_All_Frame
+//  DCMI_InitStructure.DCMI_VSPolarity = DCMI_VSPolarity_High;
+//  DCMI_InitStructure.DCMI_HSPolarity = DCMI_HSPolarity_High;
+  //DCMI_InitStructure.DCMI_CaptureRate = DCMI_CaptureRate_1of2_Frame;//DCMI_CaptureRate_All_Frame
+  DCMI_InitStructure.DCMI_CaptureRate = DCMI_CaptureRate_All_Frame;
   DCMI_InitStructure.DCMI_ExtendedDataMode = DCMI_ExtendedDataMode_8b; //?
   
   DCMI_Init(&DCMI_InitStructure);
 
 	//DCMI_JPEGCmd(ENABLE);
 	DCMI_JPEGCmd(DISABLE);   
-	
+
+//	DCMI_Crop.DCMI_CaptureCount = 			460-1;
+//	DCMI_Crop.DCMI_HorizontalOffsetCount = 	20;
+//	DCMI_Crop.DCMI_VerticalLineCount = 		320-1;
+//	DCMI_Crop.DCMI_VerticalStartLine = 		0;
+//	DCMI_CROPConfig (&DCMI_Crop);
+//	DCMI_CROPCmd (ENABLE);
+
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
   NVIC_InitStructure.NVIC_IRQChannel = DCMI_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -124,9 +137,9 @@ void DCMI_GPIO_Init(void)
 	NVIC_Init(&NVIC_InitStructure); 
 
   /* DCMI Interrupts config ***************************************************/
-//	 DCMI_ITConfig(DCMI_IT_VSYNC, ENABLE);
-//	 DCMI_ITConfig(DCMI_IT_LINE, ENABLE);
-     DCMI_ITConfig(DCMI_IT_FRAME, ENABLE);
+	DCMI_ITConfig(DCMI_IT_VSYNC, ENABLE);
+	DCMI_ITConfig(DCMI_IT_LINE,  ENABLE);
+  DCMI_ITConfig(DCMI_IT_FRAME, ENABLE);
 //   DCMI_ITConfig(DCMI_IT_ERR, ENABLE);
 }
 
@@ -152,7 +165,8 @@ void DCMI_DMA_Init(uint32_t bufsize)
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;//因为是传进数组，所以要启用自增
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;//DCMI读出的数据是32位的
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//数组内的元素都是8位的
+  //DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;//数组内的元素都是8位的
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;//数组内的元素都是8位的
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
   DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
   DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;        
@@ -160,8 +174,8 @@ void DCMI_DMA_Init(uint32_t bufsize)
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
 
-  DMA_SetCurrDataCounter(DMA2_Stream1, bufsize);
-  DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), DMA_Memory_0);
+  //DMA_SetCurrDataCounter(DMA2_Stream1, bufsize);
+  //DMA_MemoryTargetConfig(DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS), DMA_Memory_0);
   DMA_DoubleBufferModeConfig (DMA2_Stream1, (uint32_t) (DCMI_BUF_ADDRESS + bufsize*4), DMA_Memory_0);
   DMA_DoubleBufferModeCmd (DMA2_Stream1, ENABLE);
 	
@@ -173,6 +187,10 @@ void DCMI_DMA_Init(uint32_t bufsize)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+	
+	DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
+	DMA_ITConfig (DMA2_Stream1, DMA_IT_TC, ENABLE);		// enable transfer complete event
+	
 	
 }
 
